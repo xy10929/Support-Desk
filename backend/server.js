@@ -4,20 +4,29 @@ const express = require('express')
 //import .env
 const dotenv = require('dotenv').config()
 
+const { errorHandler } = require('./middleware/errorMiddleware')
+
 //find port in .env
 const PORT = process.env.PORT || 8000
 
 const app = express()
 
-//create route
+//add middleware
+//allow sending route json
+app.use(express.json())
+//allow url encoded form
+app.use(express.urlencoded({ extend: false }))
 
+//create route
 //root url
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Welcome to the Support Desk API' })
 })
 
 //route
-///POST api/users/... matches the url in userRoute.js
+//api/users/... matches the url (with its HTTP method) in userRoute.js
 app.use('/api/users', require('./routes/userRoutes'))
+
+app.use(errorHandler)
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
