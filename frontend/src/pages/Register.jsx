@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FaUser } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import { useSelector, useDispatch } from 'react-redux'
 import { register } from '../features/auth/authSlice'
+import { useNavigate } from 'react-router-dom'
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -16,10 +17,24 @@ function Register() {
   const { name, email, password, password2 } = formData
 
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
-  const { user, isLoading, isSuccess, message } = useSelector(
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.auth
   )
+
+  // useEffect(() => {
+  //   if (isError) {
+  //     toast.error(message)
+  //   }
+
+  //   //redirect when logged in
+  //   if (isSuccess || user) {
+  //     navigate('/')
+  //   }
+
+  //   dispatch(reset())
+  // }, [isError, isSuccess, user, message, navigate, dispatch])
 
   const onChange = (e) => {
     setFormData((preState) => ({
@@ -41,6 +56,15 @@ function Register() {
         password,
       }
       dispatch(register(userData))
+        .unwrap()
+        .then((user) => {
+          // NOTE: by unwrapping the AsyncThunkAction we can navigate the user after
+          // getting a good response from our API or catch the AsyncThunkAction
+          // rejection to show an error message
+          toast.success(`Registered new user - ${user.name}`)
+          navigate('/')
+        })
+        .catch(toast.error)
     }
   }
 
