@@ -29,6 +29,8 @@ app.get('/', (req, res) => {
 //api/users/... matches the url (with its HTTP method) in userRoute.js
 app.use('/api/users', require('./routes/userRoutes'))
 
+app.use('/api/tickets', require('./routes/ticketRoutes'))
+
 app.use(errorHandler)
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
