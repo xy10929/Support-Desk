@@ -20,6 +20,7 @@ function Register() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  //get from redux(authSlice.js)
   const { user, isError, isSuccess, message, isLoading } = useSelector(
     (state) => state.auth
   )
