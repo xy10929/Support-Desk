@@ -1,9 +1,18 @@
-import { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { createTicket, reset } from '../features/tickets/ticketSlice'
+import Spinner from '../components/Spinner'
+import BackButton from '../components/BackButton'
 
 function NewTicket() {
-  //get user from global state(authSlice)
+  //get user from global state(authSlice & ticketSlice -> store.js)
   const { user } = useSelector((state) => state.auth)
+  const { isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.ticket
+  )
+
   //get info from user
   const [name] = useState(user.name)
   const [email] = useState(user.email)
@@ -12,17 +21,39 @@ function NewTicket() {
   const [product, setProduct] = useState('iPhone')
   const [description, setDescription] = useState('')
 
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message)
+    }
+
+    if (isSuccess) {
+      dispatch(reset())
+      navigate('/tickets')
+    }
+
+    dispatch(reset())
+  }, [dispatch, isError, isSuccess, navigate, message])
+
   const onSubmit = (e) => {
     e.preventDefault()
+
+    dispatch(createTicket({ product, description }))
+  }
+
+  if (isLoading) {
+    return <Spinner />
   }
 
   return (
     <>
+      <BackButton url='/' />
       <section className='heading'>
         <h1>Create new ticket</h1>
         <p>Please fill out the form below</p>
       </section>
-
       <section className='form'>
         <div className='form-group'>
           <label htmlFor='name'>Customer Name</label>
@@ -32,9 +63,8 @@ function NewTicket() {
           <label htmlFor='email'>Customer Email</label>
           <input type='text' className='form-control' value={email} disabled />
         </div>
-
-        <div className='form-group'>
-          <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit}>
+          <div className='form-group'>
             <label htmlFor='product'>Product</label>
             <select
               name='product'
@@ -46,24 +76,26 @@ function NewTicket() {
               <option value='iPad'>iPad</option>
               <option value='Mac'>Mac</option>
             </select>
-          </form>
-        </div>
+          </div>
 
-        <div className='form-group'>
-          <label htmlFor='description'>Description of the issue</label>
-          <textarea
-            name='description'
-            id='description'
-            className='form-control'
-            placeholder='Description'
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          ></textarea>
-        </div>
+          <div className='form-group'>
+            <label htmlFor='description'>Description of the issue</label>
+            <textarea
+              name='description'
+              id='description'
+              className='form-control'
+              placeholder='Description'
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            ></textarea>
+          </div>
 
-        <div className='form-group'>
-          <button className='btn btn-block'>Submit</button>
-        </div>
+          <div className='form-group'>
+            <button className='btn btn-block' onSubmit={onSubmit}>
+              Submit
+            </button>
+          </div>
+        </form>
       </section>
     </>
   )
