@@ -4,6 +4,7 @@ import { getTickets, reset } from '../features/tickets/ticketSlice'
 import Spinner from '../components/Spinner'
 import BackButton from '../components/BackButton'
 import TicketItem from '../components/TicketItem'
+
 function Tickets() {
   //get from global state (ticketSlice -> store.js)
   const { tickets, isLoading, isSuccess } = useSelector(
