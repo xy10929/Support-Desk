@@ -7,6 +7,7 @@ const { errorHandler } = require('./middleware/errorMiddleware')
 const connectDB = require('./config/db')
 //find port in .env
 const PORT = process.env.PORT || 8000
+const path = require('path')
 
 //connect to DB
 connectDB()
@@ -31,13 +32,16 @@ app.use('/api/users', require('./routes/userRoutes'))
 
 app.use('/api/tickets', require('./routes/ticketRoutes'))
 
+//serve frontend
 if (process.env.NODE_ENV === 'production') {
-  const __dirname = path.resolve()
-  // app.use('/uploads', express.static('/var/data/uploads'))
-  app.use(express.static(path.join(__dirname, '/frontend/build')))
+  //set build folder as static
+  app.use(express.static(path.join(__dirname, '../frontend/build')))
 
+  //all other router * will return index.html in build folder
   app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'))
+    res.sendFile(
+      path.resolve(__dirname, '../', 'frontend', 'build', 'index.html')
+    )
   )
 } else {
   app.get('/', (req, res) => {
