@@ -12,7 +12,7 @@ function NoteItem({ note }) {
       }}
     >
       <h4>
-        Note from{' '}
+        Note from
         {note.isStaff ? <span> staff xy </span> : <span>{user.name}</span>}
       </h4>
       <p>{note.text}</p>
