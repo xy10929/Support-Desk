@@ -8,7 +8,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import {
   getNotes,
   createNote,
-  reset as notesReset,
+  // reset as notesReset,
 } from '../features/notes/noteSlice'
 import NoteItem from '../components/NoteItem'
 import Modal from 'react-modal'
@@ -30,7 +30,7 @@ const customStyles = {
 Modal.setAppElement('#root')
 
 function Ticket() {
-  const { ticket, isLoading, isSuccess, isError, message } = useSelector(
+  const { ticket, isLoading, isError, message } = useSelector(
     (state) => state.tickets
   )
   const { notes, isLoading: notesIsLoading } = useSelector(
@@ -51,6 +51,7 @@ function Ticket() {
 
     dispatch(getTicket(ticketId))
     dispatch(getNotes(ticketId))
+    //eslint-disable-next-line
   }, [isError, message, ticketId])
 
   const onTicketClose = () => {
