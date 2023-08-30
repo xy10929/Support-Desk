@@ -21,15 +21,29 @@ app.use(express.urlencoded({ extend: false }))
 
 //create route
 //root url
-app.get('/', (req, res) => {
-  res.status(200).json({ message: 'Welcome to the Support Desk API' })
-})
+// app.get('/', (req, res) => {
+//   res.status(200).json({ message: 'Welcome to the Support Desk API' })
+// })
 
 //route
 //api/users/... matches the url (with its HTTP method) in userRoute.js
 app.use('/api/users', require('./routes/userRoutes'))
 
 app.use('/api/tickets', require('./routes/ticketRoutes'))
+
+if (process.env.NODE_ENV === 'production') {
+  const __dirname = path.resolve()
+  // app.use('/uploads', express.static('/var/data/uploads'))
+  app.use(express.static(path.join(__dirname, '/frontend/build')))
+
+  app.get('*', (req, res) =>
+    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'))
+  )
+} else {
+  app.get('/', (req, res) => {
+    res.status(200).json({ message: 'Welcome to the Support Desk API' })
+  })
+}
 
 app.use(errorHandler)
 
